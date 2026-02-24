@@ -6,20 +6,11 @@ class queue {
     private:
     template <typename Iter>
     bool search(Iter &arr, T x) {
-        int high = arr.size()-1;
-        int low = 0;
-
-        while (low <= high) {
-            int mid(low + (high - low) / 2);
-
-            if (arr[mid] == x) {
-                return true;
-            }
-            else {
-                if (x < arr[mid]) {high = mid - 1;}
-                else low = mid + 1;
-            }
-        }    
+        int search = 0;
+        while (arr[search] != x && search < len) {
+            search ++;
+        }
+        if (arr[search] == x) {return true;}
         return false;
     }
 
