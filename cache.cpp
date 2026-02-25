@@ -13,13 +13,11 @@ void eat_input (std::string &input) {
 }
 
 int range(queue<int> &q, std::string &numbers) {
-    int times, change, num, misses = 0;
+    int times = 0, change = 0, num = 0, misses = 0;
     std::stringstream ss(numbers);
-    ss >> num;
-    ss >> change;
-    ss >> times;
+    ss >> num >> change >> times;
     for (; times > 0; times--) {
-        if (q.search(num)) {
+        if (!q.search(num)) {
             misses ++;
             q.push(num);
         }
@@ -28,43 +26,64 @@ int range(queue<int> &q, std::string &numbers) {
     return misses;
 }
 
+int addr(queue<int> &q, std::string &numbers) {
+    std::stringstream ss(numbers);
+    int num = 0, misses = 0;
+    ss >> num;
+    if (!q.search(num)) {
+        misses ++;
+        q.push(num);
+    }
+    return misses;
+}
+
 int main() {
-    int cases, size;
+    int cases, size = 0;
     std::vector<int> caches;
     std::vector<queue<int>> cs;
-    std::vector<int> misses;
+    int *misses;
 
     std::cin >> cases;
-    for (; cases > 0; cases --) {
+    for (int t = 0; t < cases; t++) {
         std::cin >> size;
-        caches.push_back(size);
+        queue<int> cache(size);
+        cs.push_back(cache);        
     }
-    for (int v : caches) {
-        queue<int> cache(v);
-        cs.push_back(cache);
-    }
+    misses = new int[cases];
+    for (int i = 0; i < cases; i++) {misses[i] = 0;}
 
     std::string input;
     std::getline(std::cin, input);
 
     while (input != "END") {
+        //std::cout << input << "\n";
         std::string prefix = input.substr(0, 4);
         eat_input(input);
 
         if (prefix == "RANG") {
+            int i = 0;
             for (queue cache : cs) {
-                range(cache, prefix);
+                misses[i] += range(cache, input);
+                i++;
             }            
         }
 
         if (prefix == "ADDR") {
-            std::cout << "ADDler\n";
+            int i = 0;
+            for (queue cache : cs) {
+                misses[i] += addr(cache, input);
+                i++;
+            }  
         }
 
         if (prefix == "STAT") {
-            std::cout << "STATs\n";
+            for (int i = 0; i < cases; i++) {
+                std::cout << misses[i] << " ";
+                misses[i] = 0;
+            }
+            std::cout << "\n";
         }
-        //std::cout << input << "\n";
         std::getline(std::cin, input);
     }
+    return 0;
 }
