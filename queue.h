@@ -8,29 +8,33 @@ class queue {
     private:
     template <typename Iter>
     bool search(Iter &arr, T x) {
-        //std::cout << "len: " << len << "\n";
-        for (int i = 0; i < len; i++) {
-            if (arr[i] == x) {return true;}
-            //std::cout << arr[i] << " ";
-        }        
+        std::cout << "len: " << len << " - ";
+        print();
+        for (int i = 0; i < used; i++) {
+            if (array[(head + i) % len] == x) {
+                return true;
+            }
+        }
+        std::cout << " MISS\n";
         return false;
     }
 
     public:
         T *array;
-        int head;
-        int tail;
+        int head = 0;
+        int tail = 0;
         int len = 0;
+        int used = 0;
 
         queue(int size) {
             array = new T[size];
-            head, tail;
-            len = size - 1;
+            head = 0, tail = 0;
+            len = size;
         }
         queue() {
             array = new T[16];
-            head, tail;
-            len = 15;
+            head = 0, tail = 0;
+            len = 16;
         }
         T pop() {
             T value = array[head];
@@ -41,26 +45,32 @@ class queue {
             return value;
         }
         bool push(T value) {
-            // 1. Calculate the next position for the tail
             int next_tail = (tail + 1) % len;
 
-            // 2. Check if the queue is full (tail hits head)
             if (next_tail == head) {
-                // Option A: Overwrite the oldest data (Standard Circular Buffer)
-                // Move head forward to "drop" the old value
                 head = (head + 1) % len; 
             }
 
-            // 3. Store the value safely
             array[tail] = value;
-    
-            // 4. Update the tail
             tail = next_tail;
+
+            if (used != len) {used ++;}
 
             return true;
         }
         bool search(T value) {
             return search(array, value);
+        }
+
+        void print() {
+            for (int i = 0; i < len; i++) {
+                std::cout << array[i] << " ";
+            }
+            std::cout << "\n";
+        }
+
+        ~queue() {
+            delete[] array;
         }
 };
 
