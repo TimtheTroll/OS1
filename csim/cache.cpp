@@ -4,24 +4,11 @@
 #include <vector>
 #include <algorithm>
 #include <sstream>
+#include <memory>
 
 template <typename T>
 class queue {
     private:
-    template <typename Iter>
-
-    bool search(Iter &arr, T x) {
-        std::cout << "len: " << len << " - ";
-        print();
-        for (int i = 0; i < used; i++) {
-            if (array[(head + i) % len] == x) {
-                std::cout << "\n\n HIT \n\n";
-                return true;
-            }
-        }
-        std::cout << " MISS\n";
-        return false;
-    }
 
     public:
         T *array;
@@ -35,19 +22,22 @@ class queue {
             head = 0, tail = 0;
             len = size;
         }
+
         queue() {
             array = new T[16];
             head = 0, tail = 0;
             len = 16;
         }
+
         T pop() {
+            if (used == 0) return T();
+    
             T value = array[head];
-            if (head++ < len) {
-                head++;
-            }
-            else {head = 0;}
+            head = (head + 1) % len;
+            used--;
             return value;
         }
+
         bool push(T value) {
             int next_tail = (tail + 1) % len;
 
@@ -62,16 +52,26 @@ class queue {
 
             return true;
         }
-        bool search(T value) {
-            return search(array, value);
+
+        bool search(T x) {
+            for (int i = 0; i < used; i++) {
+                int actual_index = (head + i) % len;
+                if (array[actual_index] == x) {
+                    return true;
+                }
+            }
+        return false;
         }
 
+        
         void print() {
             for (int i = 0; i < len; i++) {
                 std::cout << array[i] << " ";
             }
             std::cout << "\n";
         }
+
+        ~queue() { delete[] array; }
 };
 
 void eat_input (std::string &input) {
@@ -110,16 +110,16 @@ int addr(queue<int> &q, std::string &numbers) {
 int main() {
     int cases, size = 0;
     std::vector<int> caches;
-    std::vector<queue<int>> cs;
+    //std::vector<queue<int>> cs;
+    std::vector<std::unique_ptr<queue<int>>> cs;
     int *misses;
 
     std::cin >> cases;
     for (int t = 0; t < cases; t++) {
-        std::cin >> size;
-        //queue<int> cache(size);
-        //cs.push_back(cache);   
-        cs.emplace_back(size);     
+    std::cin >> size;
+    cs.push_back(std::make_unique<queue<int>>(size));
     }
+
     misses = new int[cases];
     for (int i = 0; i < cases; i++) {misses[i] = 0;}
 
@@ -133,17 +133,16 @@ int main() {
 
         if (prefix == "RANG") {
             int i = 0;
-            for (queue<int>& cache : cs) {
-                misses[i] += range(cache, input);
-                //cache.print();
+            for (auto& cache_ptr : cs) {
+                misses[i] += range(*cache_ptr, input); 
                 i++;
-            }            
+            }      
         }
 
         if (prefix == "ADDR") {
             int i = 0;
-            for (queue<int>& cache : cs) {
-                misses[i] += addr(cache, input);
+            for (auto& cache_ptr : cs) {
+                misses[i] += addr(*cache_ptr, input);
                 //cache.print();
                 i++;
             }  
