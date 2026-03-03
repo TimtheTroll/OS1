@@ -7,7 +7,7 @@ int main() {
     std::string A;
     std::vector<char> S;
     int examples;
-    int out = 0;
+    long long int out = 0;
 
     std::cin >> examples;
     std::getchar(); // throw away extra newline.
