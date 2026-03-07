@@ -3,8 +3,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "stack.h"
 #include <cstring>
+#include <queue>
 
 struct sub {
     int time;
@@ -13,27 +13,25 @@ struct sub {
     std::string completed;
 };
 
-void print_stuff(std::vector<Stack<sub>> &probs) {
-    sub temp;
-    for (Stack<sub> v : probs) {
-        while (!v.empty()) {
-            temp = v.pop();
-            std::cout << " (" << temp.time << ", " << temp.team << ", " << temp.problem << ", " << temp.completed << ") ";
-        }
-        std::cout << "\n";
-    }
-}
+typedef std::vector<sub> v_sub;
+typedef std::vector<v_sub> vv_sub;
 
 int main() {
     int problems, teams, subs;
-    std::vector<Stack<sub>> probs;
+    sub latest[26];
     std::cin >> problems >> teams >> subs;
-    char key[26];
-    key[0] = '0';
+    sub t_b[teams+1][26];
     
     for (int i = 0; i < problems; i++) {
-        Stack<sub> stack;
-        probs.push_back(stack);
+        sub temp = {0, 0, 'A', "No"};
+        latest[i] = temp;
+    }
+    for (int i = 0; i < teams+1; i++) {
+        for (char c = 'A'; c < 'Z'+1; c++) {
+            sub temp = {0, 0, 'A', "No"};
+            int idx = c-'A';
+            t_b[i][idx] = temp;
+        }        
     }
 
     sub submission;
@@ -43,40 +41,38 @@ int main() {
         std::cin >> submission.team;
         std::cin >> submission.problem;
         std::cin >> submission.completed;
+        //std::cout << " {" << submission.problem << " t:" << submission.time << " team:" << submission.team << " " << submission.completed << "}\n";
 
-        //std::cout << " (" << submission.time << ", " << submission.team << ", " << submission.problem << ", " << submission.completed << ") ";
-
-        if (key[0] == '0')  {
-            key[idx] = submission.problem;
-            idx++;
+        if (submission.completed == "Yes") {
+            if (t_b[submission.team][submission.problem-'A'].completed == "No") {
+                t_b[submission.team][submission.problem-'A'] = submission;
+                latest[submission.problem-'A'] = submission;
+            }
         }
-        //std::cout << "key: " << key << "\n";
-
-        char* result = std::strchr(key, submission.problem);
-
-        if (result != nullptr) {
-            idx2 = result - key;
-            probs[idx2].push(submission);
+    }
+    for (int i = 0; i < problems; i++) {
+        if (latest[i].completed == "No") {
+            char temp = 'A' + i;
+            std::cout << temp << " - -\n";
         }
         else {
-            key[idx] = submission.problem;
-            probs[idx].push(submission);
-            idx++;
+            std::cout << latest[i].problem << " " << latest[i].time << " " << latest[i].team << "\n";
         }
     }
 
-    //print_stuff(probs);
-    for (int i = 0; i < problems; i++) {
-        if (!probs[i].empty()) {
-            sub temp = probs[i].pop();
-            while (!probs[i].empty() && temp.completed == "No") {
-                sub temp = probs[i].pop();
-            }            
-            std::cout << temp.problem << " " << temp.time << " " << temp.team << "\n";
-        }
-        else {
-            char temp = 'A' + i;
-            std:: cout << temp << " - -\n";
-        }
-    }    
+    // for (int i = 0; i < problems; i++) {
+    //     if (!probs[i].empty()) {
+    //         sub temp = probs[i].front();
+    //         probs[i].pop();
+    //         while (!probs[i].empty() && temp.completed == "No") {
+    //             sub temp = probs[i].front();
+    //             probs[i].pop();
+    //         } 
+    //         std::cout << temp.problem << " " << temp.time << " " << temp.team << "\n";
+    //     }
+    //     else {
+    //         char temp = 'A' + i;
+    //         std:: cout << temp << " - -\n";
+    //     }
+    // }    
 }
