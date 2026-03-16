@@ -4,7 +4,7 @@ Last Blood (blood.cpp) - level 4 - Array Manipulation, Easier
 Inception (inception.cpp) - level 4 - Stack
 Exhibition (exhibition.cpp) - level 4 - Hash Table (map), Easier
 Algorithm of Phil (phil.cpp) - level 5 - Bit manipulation
-Cache Simulator (cachesim.cpp) - "level 5" - Tree Related Structures
+Cache Simulator (cache.cpp) - level 5 - Tree Related Structures
 
 the extra cache simulator cpp file is not an actual solution that V-Judge accepts but I would
 consider it to be the true solution seeing as the actual solution has nothing to do with LRU caches.
